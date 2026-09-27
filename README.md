@@ -36,16 +36,19 @@ java -jar target/tienda-web.jar
 
 ## Desplegarlo en la web
 
-El proyecto ya está listo para plataformas tipo Render o Railway:
+Render (y la mayoría de plataformas similares) no tienen un entorno nativo para
+Java: para desplegar ahí, la forma estándar es con Docker. El proyecto ya incluye
+un `Dockerfile` listo para eso.
 
-1. Sube este proyecto a un repositorio de GitHub.
-2. En Render/Railway, crea un servicio nuevo apuntando a ese repo, tipo "Java" /
-   detectado por `pom.xml`.
+1. Sube este proyecto a un repositorio de GitHub (incluyendo el `Dockerfile`).
+2. En Render: New > Web Service > selecciona tu repo > en "Environment" elige
+   **Docker** (no "Node" ni "Java", que no existe como entorno nativo). Render
+   detecta el `Dockerfile` automáticamente y no hace falta build/start command.
 3. La app ya lee el puerto desde la variable de entorno `PORT`
-   (`server.port=${PORT:8080}` en `application.properties`), que es como estas
-   plataformas asignan el puerto — no necesitas configurar nada extra.
-4. El comando de build es `mvn clean package` y el de arranque
-   `java -jar target/tienda-web.jar`.
+   (`server.port=${PORT:8080}` en `application.properties`), que es como Render
+   se comunica con el contenedor — no necesitas configurar nada extra.
+4. Al desplegar, Render construye la imagen con el `Dockerfile` (usa Maven dentro
+   de la imagen para compilar) y luego corre `java -jar app.jar`.
 
 También puedes subir el `.jar` a cualquier VPS propio y correrlo con
 `java -jar tienda-web.jar` detrás de un proxy (nginx, Caddy, etc.) si quieres
